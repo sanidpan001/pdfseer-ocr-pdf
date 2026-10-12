@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDFSeer — OCR PDF Online Free: Make Scanned PDFs Searchable with OCR</title>
+<meta name="description" content="Free OCR for scanned PDFs. Recognise the text in scanned pages with Tesseract OCR, download the extracted text, and get a searchable PDF with an invisible text layer.">
+<link rel="canonical" href="https://pdfseer.fixoraa.tech/">
+<meta property="og:title" content="PDFSeer — OCR PDF Online Free: Make Scanned PDFs Searchable with OCR">
+<meta property="og:description" content="Free OCR for scanned PDFs. Recognise the text in scanned pages with Tesseract OCR, download the extracted text, and get a searchable PDF with an invisible text layer.">
+<meta property="og:url" content="https://pdfseer.fixoraa.tech/">
+<meta property="og:type" content="website">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';</script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.5/dist/tesseract.min.js"></script>
+<style>
+:root{--pri:#7E22CE;--acc:#FACC15;--bgc:#FAF5FF}
+body{background:var(--bgc);font-family:'Segoe UI',system-ui,sans-serif}
+.pri{background:var(--pri)} .prit{color:var(--pri)}
+.btn{background:var(--pri);color:#fff;padding:.6rem 1.2rem;border-radius:.6rem;font-weight:600;cursor:pointer;border:none}
+.btn:hover{opacity:.9} .btn2{background:var(--acc);color:#111;padding:.6rem 1.2rem;border-radius:.6rem;font-weight:600;cursor:pointer;border:none}
+.btn:disabled,.btn2:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{border:1.5px solid #cbd5e1;border-radius:.55rem;padding:.55rem .7rem;width:100%;background:#fff;color:#0f172a}
+input[type=file]{padding:.45rem .6rem} input[type=range]{padding:0} input[type=checkbox],input[type=radio]{width:auto}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent}
+label{font-size:.83rem;font-weight:600;display:block;margin-bottom:.3rem}
+.card{background:#fff;border-radius:1rem;box-shadow:0 8px 30px rgba(15,23,42,.08);padding:1.4rem}
+article p{margin:.7rem 0;line-height:1.75;color:#334155}
+article h2{font-size:1.45rem;font-weight:800;margin:1.6rem 0 .4rem;color:#0f172a}
+.faq{background:#fff;border-radius:.7rem;padding:.9rem 1.1rem;margin:.55rem 0;box-shadow:0 2px 10px rgba(15,23,42,.05)}
+.faq summary{font-weight:700;cursor:pointer}
+table.dt{width:100%;border-collapse:collapse} table.dt th,table.dt td{border:1px solid #e2e8f0;padding:.45rem .6rem;text-align:left;font-size:.9rem}
+table.dt th{background:#f1f5f9}
+.drop{border:2px dashed #94a3b8;border-radius:.8rem;padding:1.1rem;text-align:center;background:#f8fafc}
+canvas.prev{max-width:100%;border:1px solid #e2e8f0;border-radius:.5rem;background:#fff}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "PDFSeer", "url": "https://pdfseer.fixoraa.tech/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Free OCR for scanned PDFs. Recognise the text in scanned pages with Tesseract OCR, download the extracted text, and get a searchable PDF with an invisible text layer."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does 'searchable PDF' actually mean?", "acceptedAnswer": {"@type": "Answer", "text": "The file looks like your scan, but a real text layer sits hidden beneath each page image, aligned with the recognised lines. Viewers can search it with Ctrl+F, selections copy actual words, and indexers can read it."}}, {"@type": "Question", "name": "How accurate is the OCR?", "acceptedAnswer": {"@type": "Answer", "text": "On clean, straight, printed pages, typically above 98% of characters. Faded, skewed or decorative pages score lower, and handwriting is only partially recognised. Proofread anything critical \u2014 especially numbers."}}, {"@type": "Question", "name": "Which language should I choose?", "acceptedAnswer": {"@type": "Answer", "text": "The language the document is actually written in \u2014 the wrong choice is the commonest cause of poor results. Mixed English + Hindi documents have a dedicated option."}}, {"@type": "Question", "name": "How long does OCR take?", "acceptedAnswer": {"@type": "Answer", "text": "A few seconds per page on a typical device, plus a one-time engine and language download on first use. Progress is shown page by page, and recognised text accumulates as it goes."}}, {"@type": "Question", "name": "Can OCR read handwriting?", "acceptedAnswer": {"@type": "Answer", "text": "Tesseract is built for print. Neat handwriting yields partial results; cursive and casual hands largely defeat it. Expect a helpful draft at best on handwritten pages."}}, {"@type": "Question", "name": "Are my scanned documents uploaded for OCR?", "acceptedAnswer": {"@type": "Answer", "text": "No. The OCR engine downloads to your browser and runs on your device; your documents never leave your machine."}}]}</script>
+</head>
+<body id="top">
+<header class="sticky top-0 z-40 shadow-md" style="background:#3B0764">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="#top" class="text-xl font-extrabold tracking-tight" style="color:#FAF5FF">🔮 PDFSeer</a>
+    <nav class="flex gap-5 text-sm font-semibold" style="color:#FAF5FF">
+      <a href="#top" class="hover:underline">Home</a>
+      <a href="https://fixoraa.tech" class="hover:underline">More Tools</a>
+    </nav>
+  </div>
+</header>
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+<main class="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+  <div class="text-center mb-6">
+    <h1 class="text-3xl sm:text-4xl font-extrabold" style="color:#0f172a">OCR a Scanned PDF — Make It Searchable</h1>
+    <p class="mt-2 text-slate-600 max-w-2xl mx-auto">A scanned PDF is a photograph pretending to be a document: you can read it, but you cannot search, copy or select a word. PDFSeer's OCR reads every page and gives the text back — as a .txt and as a searchable PDF.</p>
+    <span class="inline-block mt-3 px-3 py-1 rounded-full text-xs font-bold text-white pri">✓ Unlimited Free Usage — No Signup, No Watermark</span>
+    <p class="mt-2 text-xs text-slate-500">🔒 100% private: your file is processed entirely in your browser and never uploaded to any server.</p>
+  </div>
+  <div class="grid md:grid-cols-5 gap-6">
+  <div class="card md:col-span-2 space-y-3">
+    <div class="drop"><label>Your scanned PDF</label><input id="file" type="file" accept="application/pdf"></div>
+    <div><label>Document language</label><select id="lang"><option value="eng">English</option><option value="hin">Hindi</option><option value="eng+hin">English + Hindi</option><option value="spa">Spanish</option><option value="fra">French</option><option value="deu">German</option></select></div>
+    <button class="btn w-full" id="go" onclick="run()">Run OCR</button>
+    <div class="flex gap-2"><button class="btn2 flex-1" id="dlt" style="display:none">⬇ Text (.txt)</button><button class="btn2 flex-1" id="dlp" style="display:none">⬇ Searchable PDF</button></div>
+    <p id="status" class="text-sm font-semibold"></p>
+    <div class="w-full bg-slate-200 rounded-full h-3"><div id="bar" class="h-3 rounded-full pri" style="width:0%"></div></div>
+    <p class="text-xs text-slate-500">OCR runs on your device and takes a few seconds per page. Clean, straight, high-contrast scans recognise best.</p>
+  </div>
+  <div class="card md:col-span-3">
+    <label>Recognised text</label>
+    <textarea id="out" rows="16" placeholder="Recognised text will appear here page by page as OCR proceeds…"></textarea>
+  </div></div>
+</main>
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="464498"></script>
+    </div>
+  </div>
+</div>
+<section class="mx-auto max-w-4xl px-4 sm:px-6 pb-6">
+  <article>
+  <h2>The photograph that thinks it is a document</h2>
+<p>A scanned PDF shows you a document but behaves like a photograph of one. Search finds nothing, because there are no characters to find — only pixels arranged like characters. Copy-paste lifts an image, screen readers fall silent, and the archive that holds ten thousand such files holds ten thousand opaque pictures whose contents no system can index. OCR — optical character recognition — is the technology that closes that gap: it examines the page image, recognises letterforms, and reconstructs the text the page depicts, restoring the document to the world of searchable, copyable, computable words.</p>
+<p>PDFSeer runs that recognition on your own device and returns two artefacts: the recognised text itself, as a clean .txt file, and a searchable PDF in which an invisible text layer is laid in register beneath each scanned page image. The searchable file looks identical to your scan — but Ctrl+F now works, selections copy words, and indexers can finally read your archive. It is the single most valuable transformation a scanned document can undergo.</p>
+<h2>How the searchable layer is built</h2>
+<p>Each page is rendered at double scale for the recogniser's benefit — OCR accuracy climbs steeply with resolution up to a point — and passed to the Tesseract engine, the open-source recogniser whose lineage runs from Hewlett-Packard research to Google stewardship, now running entirely in your browser. Tesseract segments the page into lines and words, classifies the shapes, and returns not only text but coordinates: where on the page each line lives.</p>
+<p>Those coordinates are what make a true searchable PDF rather than a text dump wearing a PDF coat. PDFSeer writes each recognised line as real text positioned behind the page image, at the line's own location and approximate size, drawn in white beneath the picture so it never shows. Viewers and search engines read that hidden layer as the page's text — because mechanically, it is. The visible page remains the scan, pixel for pixel, which is why the method is trusted for records: nothing about the evidence changes, and everything about its findability does.</p>
+<h2>Accuracy: what OCR promises and what it cannot</h2>
+<p>On clean input — a straight, high-contrast scan of printed text — modern OCR is startlingly good, routinely above ninety-eight percent character accuracy. Accuracy decays with the real world's imperfections: skewed pages, faded or foxed paper, show-through from the reverse side, cramped type, decorative fonts, handwriting (a different discipline, where results are honest but modest), and tables whose geometry confuses line-finding. The tool's language selector matters enormously: telling the engine the document is Hindi or German loads the right letterforms and dictionary, and a wrong language choice is the commonest self-inflicted accuracy wound.</p>
+<p>Treat OCR output as an excellent draft, not a transcript of record. For searching, indexing and reading, small errors are irrelevant — search tolerates a misread letter in a long word poorly, but across a whole archive the recognised majority transforms retrieval. For republication, legal evidence or figures that matter, proofread against the scan. PDFSeer states this plainly in its own completion message, because a tool that oversells OCR accuracy teaches its users to skip the one check that matters.</p>
+<h2>How to OCR a PDF, step by step</h2>
+<p>Load the scanned file and choose the document's language correctly — this single setting decides more accuracy than everything else combined. Run the OCR and watch pages process in sequence; the recognised text accumulates in the panel so you can judge quality from page one rather than discovering it at the end. Long documents take a few seconds per page on your device, and the progress bar counts honestly.</p>
+<p>When it completes, download both outputs. Search the .txt for a distinctive word you know is on page three — if it is found, the pipeline worked. Open the searchable PDF, press Ctrl+F, and search again inside the document itself: the viewer should jump to the word on its scanned page, highlighted over the image. That small jump is one of the more satisfying moments in document work — the archive, waking up.</p>
+<h2>Where searchable PDFs change the game</h2>
+<p>Offices digitising filing cabinets gain archives they can actually interrogate: 'every invoice mentioning this supplier, across six years of scans'. Researchers OCR proceedings and out-of-print texts into corpora that can be mined and quoted. Legal and compliance teams make disclosure bundles searchable for reviewers instead of ceremonial. Accessibility is transformed: a screen-reader user gains a document that was previously a locked picture, which for public records is not a convenience but a right being operationalised.</p>
+<p>The compounding effect is the real story. One searchable PDF is a nicer file; a thousand searchable PDFs are a database wearing a filing cabinet's clothes. Institutions sit on mountains of scanned paper whose knowledge is effectively frozen, and the thaw costs nothing but compute they already own — which, since this tool runs locally, means no per-page OCR invoices standing between an archive and its own contents.</p>
+<h2>Privacy: the engine comes to the document</h2>
+<p>Scanned archives are dense with sensitive material — contracts, records, correspondence, files that were paper precisely because they were once considered safe from networks. Cloud OCR asks you to upload all of it. PDFSeer inverts the flow: the Tesseract engine and language data download to your browser once, and your documents never travel anywhere. Recognition happens in your tab's memory; outputs download directly; closing the tab erases the session.</p>
+<p>That inversion also removes the usual meters: no per-page pricing, no monthly character quotas, no queue behind other customers' archives. Your backfile converts at your processor's pace, overnight if you wish, at no marginal cost and with no third party ever holding the collection. For archives whose contents are the reason they were locked in cabinets, that is not an implementation detail — it is the whole argument.</p>
+<h2>Preparing scans OCR will love</h2>
+<p>Five minutes at the scanner saves an hour of proofreading. Scan at 300 dpi in grayscale, straighten the page against the scanner's edge, and keep the glass clean — specks become punctuation. Avoid photographing pages when a scanner exists: perspective and shadows are accuracy poison. For bound books, press the spine flat or accept that words near the gutter will suffer, and consider splitting double-page spreads so each page is recognised on its own geometry. If a page returns garbled, re-scan just that page better rather than accepting the errors — OCR quality is decided at capture, and no downstream setting fully redeems a bad image. Your archive deserves the good scan; it will be read by machines for decades.</p>
+  <h2>Frequently Asked Questions</h2>
+  <details class="faq"><summary>What does 'searchable PDF' actually mean?</summary><p>The file looks like your scan, but a real text layer sits hidden beneath each page image, aligned with the recognised lines. Viewers can search it with Ctrl+F, selections copy actual words, and indexers can read it.</p></details>
+<details class="faq"><summary>How accurate is the OCR?</summary><p>On clean, straight, printed pages, typically above 98% of characters. Faded, skewed or decorative pages score lower, and handwriting is only partially recognised. Proofread anything critical — especially numbers.</p></details>
+<details class="faq"><summary>Which language should I choose?</summary><p>The language the document is actually written in — the wrong choice is the commonest cause of poor results. Mixed English + Hindi documents have a dedicated option.</p></details>
+<details class="faq"><summary>How long does OCR take?</summary><p>A few seconds per page on a typical device, plus a one-time engine and language download on first use. Progress is shown page by page, and recognised text accumulates as it goes.</p></details>
+<details class="faq"><summary>Can OCR read handwriting?</summary><p>Tesseract is built for print. Neat handwriting yields partial results; cursive and casual hands largely defeat it. Expect a helpful draft at best on handwritten pages.</p></details>
+<details class="faq"><summary>Are my scanned documents uploaded for OCR?</summary><p>No. The OCR engine downloads to your browser and runs on your device; your documents never leave your machine.</p></details>
+  </article>
+</section>
+<footer class="mt-6 py-8" style="background:#3B0764;color:#FAF5FF">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm">
+    <p class="font-bold text-base">PDFSeer</p>
+    <p class="opacity-80 mt-1">Free OCR for scanned PDFs. Recognise the text in scanned pages with Tesseract OCR, download the extracted text, and get a searchable PDF with an invisible text layer.</p>
+    <p class="mt-2"><a href="#top" class="underline">Home</a> · <a href="https://fixoraa.tech" class="underline">More Tools</a></p>
+    <p class="fx-credit" style="text-align:center;font-size:12.5px;opacity:.62;margin:10px auto 2px;letter-spacing:.01em">Made by <a href="https://fixoraa.tech" target="_blank" rel="noopener" style="color:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px">Fixoraa</a></p>
+  </div>
+</footer>
+<script>
+
+const $=id=>document.getElementById(id);
+function fmtBytes(b){if(b===0)return '0 B';const k=1024,s=['B','KB','MB','GB'];const i=Math.floor(Math.log(b)/Math.log(k));return (b/Math.pow(k,i)).toFixed(i?1:0)+' '+s[i];}
+function setStatus(m,ok){const el=$('status');if(!el)return;el.textContent=m;el.style.color=ok===false?'#dc2626':'inherit';}
+function download(bytes,name,type){const blob=bytes instanceof Blob?bytes:new Blob([bytes],{type:type||'application/pdf'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);}
+async function readFile(input){const f=input.files&&input.files[0];if(!f)throw new Error('Please choose a PDF file first.');return {file:f,buf:await f.arrayBuffer()};}
+function showDl(id,bytes,name){const b=$(id);b.style.display='inline-block';b.onclick=()=>download(bytes,name);}
+
+
+async function run(){
+  const btn=$('go'); btn.disabled=true;
+  try{
+    const {file,buf}=await readFile($('file'));
+    const src=await pdfjsLib.getDocument({data:buf.slice(0)}).promise;
+    const lang=$('lang').value;
+    setStatus('Loading OCR engine ('+lang+') — first run downloads the language data once…');
+    const worker=await Tesseract.createWorker(lang,1,{logger:m=>{ if(m.status==='recognizing text') $('bar').style.width=Math.round(m.progress*100)+'%'; }});
+    const out=await PDFLib.PDFDocument.create();
+    const font=await out.embedFont(PDFLib.StandardFonts.Helvetica);
+    const allText=[];
+    for(let i=1;i<=src.numPages;i++){
+      const page=await src.getPage(i);
+      const vp=page.getViewport({scale:2});
+      const cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
+      const ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+      setStatus('OCR page '+i+' of '+src.numPages+'…');
+      const {data}=await worker.recognize(cv);
+      allText.push('—— Page '+i+' ——\n'+data.text.trim());
+      $('out').value=allText.join('\n\n');
+      const jpg=await (await fetch(cv.toDataURL('image/jpeg',0.85))).arrayBuffer();
+      const img=await out.embedJpg(jpg);
+      const np=out.addPage([vp.width/2,vp.height/2]);
+      data.lines.forEach(ln=>{ try{ np.drawText(ln.text.replace(/[^\x20-\x7E]/g,''),{x:ln.bbox.x0/2,y:(vp.height-ln.bbox.y1)/2,size:Math.max(4,(ln.bbox.y1-ln.bbox.y0)/2*0.8),font:font,color:PDFLib.rgb(1,1,1)}); }catch(e){} });
+      np.drawImage(img,{x:0,y:0,width:vp.width/2,height:vp.height/2});
+      $('bar').style.width=Math.round(i/src.numPages*100)+'%';
+    }
+    await worker.terminate();
+    const bytes=await out.save();
+    const full=allText.join('\n\n');
+    showDl('dlt',new Blob([full],{type:'text/plain'}),file.name.replace(/\.pdf$/i,'')+'-ocr.txt');
+    showDl('dlp',bytes,file.name.replace(/\.pdf$/i,'')+'-searchable.pdf');
+    setStatus('Done ✔ OCR complete for '+src.numPages+' pages. In the searchable PDF the recognised text hides beneath each page image — try Ctrl+F in it. Expect OCR to be very good, not perfect: proofread critical figures.');
+  }catch(e){ setStatus('⚠ '+(e.message||e),false); }
+  btn.disabled=false;
+}
+
+</script>
+</body>
+</html>
